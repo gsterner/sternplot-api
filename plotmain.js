@@ -51,7 +51,7 @@ function drawLine(ctx, x_values, y_values) {
 }
 
 function drawOnCanvas(canvas, xArray, yArray) {
-    // var canvas=document.getElementById("plotCanvas");
+//    var canvas=document.getElementById("subplot_4_4_0");
     var ctx=canvas.getContext("2d");
     var canvas_width = canvas.width;
     var canvas_height = canvas.height;
@@ -71,17 +71,26 @@ function drawOnCanvas(canvas, xArray, yArray) {
     drawLine(ctx, x_values, y_values)
 }
 
-function plotLineInList(container, plot_list, line_index) {
+function plotLineInList(canvas, plot_list, line_index) {
     var data_array = plot_list[line_index]["data"];
     var xArray = getXData(data_array);
     var yArray = getYData(data_array);
-    drawOnCanvas(container, xArray, yArray);
+    drawOnCanvas(canvas, xArray, yArray);
+}
+
+function sternplotOnCanvas(canvas, plot_list) {
+    for ( line_index = 0; line_index < plot_list.length; line_index++) {
+        plotLineInList(canvas, plot_list, line_index);
+    }
 }
 
 function sternplot(container, plot_list) {
-    for ( line_index = 0; line_index < plot_list.length; line_index++) {
-        plotLineInList(container, plot_list, line_index);
-    }
+    var canvas = document.createElement('canvas');
+    container.appendChild(canvas);
+    sternplotOnCanvas(canvas, plot_list)
+    // for ( line_index = 0; line_index < plot_list.length; line_index++) {
+    //     plotLineInList(canvas, plot_list, line_index);
+    // }
     
     // var data_array = plot_list[0]["data"];
     // var xArray = getXData(data_array);
