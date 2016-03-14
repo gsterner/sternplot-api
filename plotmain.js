@@ -86,6 +86,8 @@ function sternplotOnCanvas(canvas, plot_list) {
 
 function sternplot(container, plot_list) {
     var canvas = document.createElement('canvas');
+    canvas.width = container.offsetWidth;
+    canvas.height = container.offsetHeight;
     container.appendChild(canvas);
     sternplotOnCanvas(canvas, plot_list)
     // for ( line_index = 0; line_index < plot_list.length; line_index++) {
