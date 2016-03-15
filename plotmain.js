@@ -50,6 +50,16 @@ function drawLine(ctx, x_values, y_values) {
     ctx.stroke();
 }
 
+function drawVerticalTic(ctx, x_value, y_value) {
+    ctx.strokeStyle = '#00f';
+    ctx.lineWidth   = 2;
+    ctx.beginPath();
+    ctx.moveTo(x_value, y_value + 50);
+    ctx.lineTo(x_value,y_value - 50);
+    ctx.stroke();
+}
+
+
 function drawOnCanvas(canvas, xArray, yArray) {
 //    var canvas=document.getElementById("subplot_4_4_0");
     var ctx=canvas.getContext("2d");
@@ -58,6 +68,17 @@ function drawOnCanvas(canvas, xArray, yArray) {
     var frame_width = canvas.width * 0.1;
     var frame_height = canvas.height * 0.1;
 
+    var x_max = Numerics.getMaxOfArray(xArray);
+    var x_min = Numerics.getMinOfArray(xArray);
+    var y_max = Numerics.getMaxOfArray(yArray);
+    var y_min = Numerics.getMinOfArray(yArray);
+
+    var x_tic_step = (x_max - x_min)/5;
+    var x_tics_untransformed = range(x_min, x_max, x_tic_step);
+
+    var x_tics = transformArrayToCoord(x_tics_untransformed, canvas_width, transformX, frame_width, frame_width)
+    var y_minmax = transformArrayToCoord([y_min, y_max], canvas_height, transformY, frame_height, frame_height)
+   
     var x_values = transformArrayToCoord(xArray, canvas_width, transformX, frame_width, frame_width)
     var y_values = transformArrayToCoord(yArray, canvas_height, transformY, frame_height, frame_height)
 
@@ -66,7 +87,8 @@ function drawOnCanvas(canvas, xArray, yArray) {
     var xtest = trans.xCoordinate(5);
     var ytest = trans.yCoordinate(100);	
     //***	
-//    ctx.clearRect(0, 0, canvas_width, canvas_width);	
+//    ctx.clearRect(0, 0, canvas_width, canvas_width);
+    drawVerticalTic(ctx, x_tics[2], y_minmax[0]);
     drawFrame(ctx, canvas_width, canvas_height, canvas_width * 0.1, canvas_height * 0.1)
     drawLine(ctx, x_values, y_values)
 }
