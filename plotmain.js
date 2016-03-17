@@ -64,10 +64,29 @@ function drawSingleTicHorizontalAxis(ctx, trans, x_value, y_value) {
     ctx.fillText(x_value.toPrecision(4), x_trans - text_shift_center, y_trans + text_shift_away);
 }
 
+function drawGridLineHorizontalAxis(ctx, trans, x_value, y_min, y_max) {
+    var x_trans = trans.xCoordinate(x_value);
+    var y_min_trans = trans.yCoordinate(y_min);
+    var y_max_trans = trans.yCoordinate(y_max);
+    ctx.beginPath();
+    ctx.moveTo(x_trans, y_min_trans);
+    ctx.lineTo(x_trans, y_max_trans);
+    ctx.stroke();
+ }
+
 function drawTicsHorizontalAxis(ctx, trans, tic_values, axis_value) {
     for ( i = 0; i < tic_values.length; i++) {
         drawSingleTicHorizontalAxis(ctx, trans, tic_values[i], axis_value);
     }    
+}
+
+function drawGridLinesHorizontalAxis(ctx, trans, tic_values, axis_value, axis_value_opposite) {
+    ctx.strokeStyle = '#708090';
+    ctx.setLineDash([2, 5]);
+    for ( i = 1; i < tic_values.length - 1; i++) {
+	drawGridLineHorizontalAxis(ctx, trans, tic_values[i], axis_value, axis_value_opposite)
+    }    
+    ctx.setLineDash([]);
 }
 
 function drawSingleTicVerticalAxis(ctx, trans, x_value, y_value) {
@@ -84,10 +103,29 @@ function drawSingleTicVerticalAxis(ctx, trans, x_value, y_value) {
     ctx.fillText(y_value.toPrecision(4), x_trans - text_shift_away, y_trans + text_shift_center);
 }
 
+function drawGridLineVerticalAxis(ctx, trans, x_min, x_max, y_value) {
+    var x_min_trans = trans.xCoordinate(x_min);
+    var x_max_trans = trans.xCoordinate(x_max);
+    var y_trans = trans.yCoordinate(y_value);
+    ctx.beginPath();
+    ctx.moveTo(x_min_trans, y_trans);
+    ctx.lineTo(x_max_trans, y_trans);
+    ctx.stroke();
+ }
+
 function drawTicsVerticalAxis(ctx, trans, tic_values, axis_value) {
     for ( i = 0; i < tic_values.length; i++) {
         drawSingleTicVerticalAxis(ctx, trans, axis_value, tic_values[i]);
     }    
+}
+
+function drawGridLinesVerticalAxis(ctx, trans, tic_values, axis_value, axis_value_opposite) {
+    ctx.strokeStyle = '#708090';
+    ctx.setLineDash([2, 5]);
+    for ( i = 1; i < tic_values.length - 1; i++) {
+	drawGridLineVerticalAxis(ctx, trans, axis_value, axis_value_opposite, tic_values[i]);
+    }    
+   ctx.setLineDash([]);
 }
 
 function drawTics(ctx, trans, x_array, y_array) {
@@ -102,7 +140,9 @@ function drawTics(ctx, trans, x_array, y_array) {
     var y_tics_untransformed = range(y_min, y_max, y_tic_step);
 
     drawTicsHorizontalAxis(ctx, trans, x_tics_untransformed, y_min);
+    drawGridLinesHorizontalAxis(ctx, trans, x_tics_untransformed, y_min, y_max);
     drawTicsVerticalAxis(ctx, trans, y_tics_untransformed, x_min);
+    drawGridLinesVerticalAxis(ctx, trans, y_tics_untransformed, x_min, x_max);
 }
 
 function drawOnCanvas(canvas, xArray, yArray) {
