@@ -45,6 +45,23 @@ Transform.prototype.yCoordinate = function(yval) {
     return Transform.yToPlotCoordinate(this.height, this.maxY, this.minY, yval, this.frameY, this.frameY);
 }
 
+Transform.prototype.xCoordinateArray = function(x_array) {
+    var x_trans = [];
+    for (i in x_array) {
+        x_trans.push(this.xCoordinate(x_array[i]));
+    }
+    return x_trans;
+}
+
+Transform.prototype.yCoordinateArray = function(y_array) {
+    var y_trans = [];
+    for (i in y_array) {
+        y_trans.push(this.yCoordinate(y_array[i]));
+    }
+    return y_trans;
+}
+
+
 /*******************************************/
 function transformToPlotCoordinates(plotLength, realLength, translation, frameStart ) {
     return plotLength / realLength * translation + frameStart;

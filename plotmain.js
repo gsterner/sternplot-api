@@ -153,15 +153,10 @@ function drawOnCanvas(canvas, xArray, yArray) {
     var frame_width = canvas.width * 0.1;
     var frame_height = canvas.height * 0.1;
 
-    var x_values = transformArrayToCoord(xArray, canvas_width, transformX, frame_width, frame_width)
-    var y_values = transformArrayToCoord(yArray, canvas_height, transformY, frame_height, frame_height)
-
-    //testing Transform refactoring
     var trans = new Transform(xArray, yArray, canvas_width, canvas_height);
-    // var xtest = trans.xCoordinate(x_tics_untransformed[0]);
-    // var ytest = trans.yCoordinate(y_min);	
-    //***	
-//    ctx.clearRect(0, 0, canvas_width, canvas_width);
+    var x_values = trans.xCoordinateArray(xArray);
+    var y_values = trans.yCoordinateArray(yArray);
+
     drawTics(ctx, trans, xArray, yArray);
     drawFrame(ctx, canvas_width, canvas_height, canvas_width * 0.1, canvas_height * 0.1)
     drawLine(ctx, x_values, y_values)
