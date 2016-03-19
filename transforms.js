@@ -12,11 +12,11 @@ function getMinOfArray(numArray) {
 }
 */
 
-function Transform(xarray, yarray, canvasWidth, canvasHeight) {
-    this.minX = Numerics.getMinOfArray(xarray);
-    this.maxX = Numerics.getMaxOfArray(xarray);
-    this.minY = Numerics.getMinOfArray(yarray);
-    this.maxY = Numerics.getMaxOfArray(yarray);
+function Transform(min_x, max_x, min_y, max_y, canvasWidth, canvasHeight) {
+    this.minX = min_x;
+    this.maxX = max_x;
+    this.minY = min_y;
+    this.maxY = max_y;
 
     this.frameX = canvasWidth * 0.1;
     this.frameY = canvasHeight * 0.1;

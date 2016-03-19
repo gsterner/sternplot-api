@@ -153,7 +153,12 @@ function drawOnCanvas(canvas, xArray, yArray) {
     var frame_width = canvas.width * 0.1;
     var frame_height = canvas.height * 0.1;
 
-    var trans = new Transform(xArray, yArray, canvas_width, canvas_height);
+    min_x = Numerics.getMinOfArray(xArray);
+    max_x = Numerics.getMaxOfArray(xArray);
+    min_y = Numerics.getMinOfArray(yArray);
+    max_y = Numerics.getMaxOfArray(yArray);
+
+    var trans = new Transform(min_x, max_x, min_y, max_y, canvas_width, canvas_height);
     var x_values = trans.xCoordinateArray(xArray);
     var y_values = trans.yCoordinateArray(yArray);
 
@@ -162,14 +167,50 @@ function drawOnCanvas(canvas, xArray, yArray) {
     drawLine(ctx, x_values, y_values)
 }
 
-function plotLineInList(canvas, plot_list, line_index) {
+
+function getLineDataX(plot_list, line_index) {
     var data_array = plot_list[line_index]["data"];
-    var xArray = getXData(data_array);
-    var yArray = getYData(data_array);
+    return getXData(data_array);
+}
+
+function getLineDataY(plot_list, line_index) {
+    var data_array = plot_list[line_index]["data"];
+    return getYData(data_array);
+}
+
+function makeGlobalArrayX(plot_list) {
+    globalArrayX = [];
+    for ( line_index = 0; line_index < plot_list.length; line_index++) {
+	globalArrayX = globalArrayX.concat(getLineDataX(plot_list, line_index));
+    }
+}
+
+function makeGlobalArrayY(plot_list) {
+    globalArrayY = [];
+    for ( line_index = 0; line_index < plot_list.length; line_index++) {
+	globalArrayY = globalArrayY.concat(getLineDataY(plot_list, line_index));
+    }
+}
+
+function getGlobalMinMax(plot_list) {
+    min_x = Numerics.getMinOfArray(makeGlobalArrayX(plot_list));
+    max_x = Numerics.getMinOfArray(makeGlobalArrayX(plot_list));
+    min_y = Numerics.getMinOfArray(makeGlobalArrayY(plot_list));
+    max_y = Numerics.getMinOfArray(makeGlobalArrayY(plot_list));
+}
+
+function plotLineInList(canvas, plot_list, line_index) {
+    // var data_array = plot_list[line_index]["data"];
+    // var xArray = getXData(data_array);
+    // var yArray = getYData(data_array);
+    var xArray = getLineDataX(plot_list, line_index);
+    var yArray = getLineDataY(plot_list, line_index);
+    
     drawOnCanvas(canvas, xArray, yArray);
 }
 
 function sternplotOnCanvas(canvas, plot_list) {
+    getGlobalMinMax(plot_list);
     for ( line_index = 0; line_index < plot_list.length; line_index++) {
         plotLineInList(canvas, plot_list, line_index);
     }
