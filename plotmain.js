@@ -128,42 +128,43 @@ function drawGridLinesVerticalAxis(ctx, trans, tic_values, axis_value, axis_valu
    ctx.setLineDash([]);
 }
 
-function drawTics(ctx, trans, x_array, y_array) {
-    var x_max = Numerics.getMaxOfArray(x_array);
-    var x_min = Numerics.getMinOfArray(x_array);
-    var y_max = Numerics.getMaxOfArray(y_array);
-    var y_min = Numerics.getMinOfArray(y_array);
+function drawTics(ctx, trans, max_mins) {
+    // var x_max = Numerics.getMaxOfArray(x_array);
+    // var x_min = Numerics.getMinOfArray(x_array);
+    // var y_max = Numerics.getMaxOfArray(y_array);
+    // var y_min = Numerics.getMinOfArray(y_array);
 
-    var x_tic_step = (x_max - x_min)/5;
-    var x_tics_untransformed = range(x_min, x_max, x_tic_step);
-    var y_tic_step = (y_max - y_min)/5;
-    var y_tics_untransformed = range(y_min, y_max, y_tic_step);
+    var x_tic_step = (max_mins.max_x - max_mins.min_x)/5;
+    var x_tics_untransformed = range(max_mins.min_x, max_mins.max_x, x_tic_step);
+    var y_tic_step = (max_mins.max_y - max_mins.min_y)/5;
+    var y_tics_untransformed = range(max_mins.min_y, max_mins.max_y, y_tic_step);
 
-    drawTicsHorizontalAxis(ctx, trans, x_tics_untransformed, y_min);
-    drawGridLinesHorizontalAxis(ctx, trans, x_tics_untransformed, y_min, y_max);
-    drawTicsVerticalAxis(ctx, trans, y_tics_untransformed, x_min);
-    drawGridLinesVerticalAxis(ctx, trans, y_tics_untransformed, x_min, x_max);
+    drawTicsHorizontalAxis(ctx, trans, x_tics_untransformed, max_mins.min_y);
+    drawGridLinesHorizontalAxis(ctx, trans, x_tics_untransformed, max_mins.min_y, max_mins.max_y);
+    drawTicsVerticalAxis(ctx, trans, y_tics_untransformed, max_mins.min_x);
+    drawGridLinesVerticalAxis(ctx, trans, y_tics_untransformed, max_mins.min_x, max_mins.max_x);
 }
 
-function drawOnCanvas(canvas, xArray, yArray) {
+function drawOnCanvas(canvas, trans, xArray, yArray) {
 //    var canvas=document.getElementById("subplot_4_4_0");
     var ctx=canvas.getContext("2d");
-    var canvas_width = canvas.width;
-    var canvas_height = canvas.height;
-    var frame_width = canvas.width * 0.1;
-    var frame_height = canvas.height * 0.1;
+    // var canvas_width = canvas.width;
+    // var canvas_height = canvas.height;
+    // var frame_width = canvas.width * 0.1;
+    // var frame_height = canvas.height * 0.1;
 
-    min_x = Numerics.getMinOfArray(xArray);
-    max_x = Numerics.getMaxOfArray(xArray);
-    min_y = Numerics.getMinOfArray(yArray);
-    max_y = Numerics.getMaxOfArray(yArray);
+    // min_x = Numerics.getMinOfArray(xArray);
+    // max_x = Numerics.getMaxOfArray(xArray);
+    // min_y = Numerics.getMinOfArray(yArray);
+    // max_y = Numerics.getMaxOfArray(yArray);
 
-    var trans = new Transform(min_x, max_x, min_y, max_y, canvas_width, canvas_height);
+    // var trans = new Transform(min_x, max_x, min_y, max_y, canvas_width, canvas_height);
+
     var x_values = trans.xCoordinateArray(xArray);
     var y_values = trans.yCoordinateArray(yArray);
 
-    drawTics(ctx, trans, xArray, yArray);
-    drawFrame(ctx, canvas_width, canvas_height, canvas_width * 0.1, canvas_height * 0.1)
+    // drawTics(ctx, trans, xArray, yArray);
+    // drawFrame(ctx, canvas_width, canvas_height, frame_width, frame_height);
     drawLine(ctx, x_values, y_values)
 }
 
@@ -183,6 +184,7 @@ function makeGlobalArrayX(plot_list) {
     for ( line_index = 0; line_index < plot_list.length; line_index++) {
 	globalArrayX = globalArrayX.concat(getLineDataX(plot_list, line_index));
     }
+    return globalArrayX;
 }
 
 function makeGlobalArrayY(plot_list) {
@@ -190,30 +192,46 @@ function makeGlobalArrayY(plot_list) {
     for ( line_index = 0; line_index < plot_list.length; line_index++) {
 	globalArrayY = globalArrayY.concat(getLineDataY(plot_list, line_index));
     }
+    return globalArrayY;
 }
 
 function getGlobalMinMax(plot_list) {
-    min_x = Numerics.getMinOfArray(makeGlobalArrayX(plot_list));
-    max_x = Numerics.getMinOfArray(makeGlobalArrayX(plot_list));
-    min_y = Numerics.getMinOfArray(makeGlobalArrayY(plot_list));
-    max_y = Numerics.getMinOfArray(makeGlobalArrayY(plot_list));
+    var min_x = Numerics.getMinOfArray(makeGlobalArrayX(plot_list));
+    var max_x = Numerics.getMaxOfArray(makeGlobalArrayX(plot_list));
+    var min_y = Numerics.getMinOfArray(makeGlobalArrayY(plot_list));
+    var max_y = Numerics.getMaxOfArray(makeGlobalArrayY(plot_list));
+    var max_mins = {
+	'min_x' : min_x,
+	'max_x' : max_x,
+	'min_y' : min_y,
+	'max_y' : max_y
+    }
+    return max_mins;
 }
 
-function plotLineInList(canvas, plot_list, line_index) {
+function plotLineInList(canvas, plot_list, trans,  line_index) {
     // var data_array = plot_list[line_index]["data"];
     // var xArray = getXData(data_array);
     // var yArray = getYData(data_array);
     var xArray = getLineDataX(plot_list, line_index);
     var yArray = getLineDataY(plot_list, line_index);
     
-    drawOnCanvas(canvas, xArray, yArray);
+    drawOnCanvas(canvas, trans, xArray, yArray);
 }
 
 function sternplotOnCanvas(canvas, plot_list) {
-    getGlobalMinMax(plot_list);
+    var max_mins = getGlobalMinMax(plot_list);
+    var canvas_width = canvas.width;
+    var canvas_height = canvas.height;
+    var frame_width = canvas.width * 0.1;
+    var frame_height = canvas.height * 0.1;
+    var trans = new Transform(max_mins.min_x, max_mins.max_x, max_mins.min_y, max_mins.max_y, canvas_width, canvas_height);
     for ( line_index = 0; line_index < plot_list.length; line_index++) {
-        plotLineInList(canvas, plot_list, line_index);
+        plotLineInList(canvas, plot_list, trans, line_index);
     }
+    var ctx=canvas.getContext("2d");
+    drawTics(ctx, trans, max_mins);
+    drawFrame(ctx, canvas_width, canvas_height, frame_width, frame_height);
 }
 
 function sternplot(container, plot_list) {
