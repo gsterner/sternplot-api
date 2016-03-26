@@ -1,3 +1,11 @@
+CSS_COLOR = {'red': '#FF0000', 
+	     'green':'#00FF00', 
+	     'blue':'#0000FF', 
+	     'yellow':'#FFFF00',
+	     'magenta':'#FF00FF',
+	     'cyan':'#00FFFF',
+	     'white':'#FFFFFF',
+	     'black' : '#000000'};
 
 function range(start, end, step)
 {
@@ -39,8 +47,8 @@ function getYData(data_array) {
     return getDataAsArray(data_array, 1);
 }
 
-function drawLine(ctx, x_values, y_values) {
-    ctx.strokeStyle = '#00f';
+function drawLine(ctx, x_values, y_values, stroke_style) {
+    ctx.strokeStyle = stroke_style;
     ctx.lineWidth   = 2;
     ctx.beginPath();
     ctx.moveTo(x_values[0],y_values[0]);
@@ -129,23 +137,17 @@ function drawGridLinesVerticalAxis(ctx, trans, tic_values, axis_value, axis_valu
 }
 
 function drawTics(ctx, trans, max_mins) {
-    // var x_max = Numerics.getMaxOfArray(x_array);
-    // var x_min = Numerics.getMinOfArray(x_array);
-    // var y_max = Numerics.getMaxOfArray(y_array);
-    // var y_min = Numerics.getMinOfArray(y_array);
-
     var x_tic_step = (max_mins.max_x - max_mins.min_x)/5;
     var x_tics_untransformed = range(max_mins.min_x, max_mins.max_x, x_tic_step);
     var y_tic_step = (max_mins.max_y - max_mins.min_y)/5;
     var y_tics_untransformed = range(max_mins.min_y, max_mins.max_y, y_tic_step);
-
     drawTicsHorizontalAxis(ctx, trans, x_tics_untransformed, max_mins.min_y);
     drawGridLinesHorizontalAxis(ctx, trans, x_tics_untransformed, max_mins.min_y, max_mins.max_y);
     drawTicsVerticalAxis(ctx, trans, y_tics_untransformed, max_mins.min_x);
     drawGridLinesVerticalAxis(ctx, trans, y_tics_untransformed, max_mins.min_x, max_mins.max_x);
 }
 
-function drawOnCanvas(canvas, trans, xArray, yArray) {
+function drawOnCanvas(canvas, trans, xArray, yArray, stroke_style) {
 //    var canvas=document.getElementById("subplot_4_4_0");
     var ctx=canvas.getContext("2d");
     // var canvas_width = canvas.width;
@@ -165,7 +167,7 @@ function drawOnCanvas(canvas, trans, xArray, yArray) {
 
     // drawTics(ctx, trans, xArray, yArray);
     // drawFrame(ctx, canvas_width, canvas_height, frame_width, frame_height);
-    drawLine(ctx, x_values, y_values)
+    drawLine(ctx, x_values, y_values, stroke_style)
 }
 
 
@@ -177,6 +179,13 @@ function getLineDataX(plot_list, line_index) {
 function getLineDataY(plot_list, line_index) {
     var data_array = plot_list[line_index]["data"];
     return getYData(data_array);
+}
+
+function getLineStrokeStyle(plot_list, line_index) {
+    if ('color' in plot_list[line_index]) {
+	return CSS_COLOR[plot_list[line_index]['color']];
+    }
+    return CSS_COLOR['blue'];
 }
 
 function makeGlobalArrayX(plot_list) {
@@ -215,8 +224,8 @@ function plotLineInList(canvas, plot_list, trans,  line_index) {
     // var yArray = getYData(data_array);
     var xArray = getLineDataX(plot_list, line_index);
     var yArray = getLineDataY(plot_list, line_index);
-    
-    drawOnCanvas(canvas, trans, xArray, yArray);
+    var stroke_style = getLineStrokeStyle(plot_list, line_index);
+    drawOnCanvas(canvas, trans, xArray, yArray, stroke_style);
 }
 
 function sternplotOnCanvas(canvas, plot_list) {
