@@ -47,6 +47,20 @@ function getYData(data_array) {
     return getDataAsArray(data_array, 1);
 }
 
+function drawPoint(ctx, x_value, y_value, stroke_style) {
+      var radius = 4;
+      ctx.beginPath();
+      ctx.arc(x_value, y_value, radius, 0, 2 * Math.PI);
+      ctx.fillStyle = stroke_style;
+      ctx.closePath();
+      ctx.fill();
+}
+
+function drawPoints(ctx, x_values, y_values, stroke_style) {
+    for ( i = 0; i < x_values.length; i++) {
+        drawPoint(ctx, x_values[i], y_values[i], stroke_style);
+    }
+}
 function drawLine(ctx, x_values, y_values, stroke_style) {
     ctx.strokeStyle = stroke_style;
     ctx.lineWidth   = 2;
@@ -135,7 +149,7 @@ function drawGridLinesVerticalAxis(ctx, trans, tic_values, axis_value, axis_valu
     }    
    ctx.setLineDash([]);
 }
-
+ 
 function drawTics(ctx, trans, max_mins) {
     var x_tic_step = (max_mins.max_x - max_mins.min_x)/5;
     var x_tics_untransformed = range(max_mins.min_x, max_mins.max_x, x_tic_step);
@@ -167,7 +181,8 @@ function drawOnCanvas(canvas, trans, xArray, yArray, stroke_style) {
 
     // drawTics(ctx, trans, xArray, yArray);
     // drawFrame(ctx, canvas_width, canvas_height, frame_width, frame_height);
-    drawLine(ctx, x_values, y_values, stroke_style)
+    drawLine(ctx, x_values, y_values, stroke_style);
+    drawPoints(ctx, x_values, y_values, stroke_style);
 }
 
 
