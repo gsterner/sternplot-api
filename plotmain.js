@@ -203,6 +203,15 @@ function getLineStrokeStyle(plot_list, line_index) {
     return CSS_COLOR['blue'];
 }
 
+function getShowLine(plot_list, line_index) {
+    if ('lines' in plot_list[line_index]) {
+	if( 'show' in plot_list[line_index]['lines'] ) {
+	    return plot_list[line_index]['lines']['show'];
+	}
+    }
+    return false;
+}
+
 function makeGlobalArrayX(plot_list) {
     globalArrayX = [];
     for ( line_index = 0; line_index < plot_list.length; line_index++) {
@@ -240,6 +249,7 @@ function plotLineInList(canvas, plot_list, trans,  line_index) {
     var xArray = getLineDataX(plot_list, line_index);
     var yArray = getLineDataY(plot_list, line_index);
     var stroke_style = getLineStrokeStyle(plot_list, line_index);
+    var show_line = getShowLine(plot_list, line_index)
     drawOnCanvas(canvas, trans, xArray, yArray, stroke_style);
 }
 
