@@ -161,28 +161,18 @@ function drawTics(ctx, trans, max_mins) {
     drawGridLinesVerticalAxis(ctx, trans, y_tics_untransformed, max_mins.min_x, max_mins.max_x);
 }
 
-function drawOnCanvas(canvas, trans, xArray, yArray, stroke_style) {
+function drawOnCanvas(canvas, trans, xArray, yArray, line_properties) {
 //    var canvas=document.getElementById("subplot_4_4_0");
     var ctx=canvas.getContext("2d");
-    // var canvas_width = canvas.width;
-    // var canvas_height = canvas.height;
-    // var frame_width = canvas.width * 0.1;
-    // var frame_height = canvas.height * 0.1;
-
-    // min_x = Numerics.getMinOfArray(xArray);
-    // max_x = Numerics.getMaxOfArray(xArray);
-    // min_y = Numerics.getMinOfArray(yArray);
-    // max_y = Numerics.getMaxOfArray(yArray);
-
-    // var trans = new Transform(min_x, max_x, min_y, max_y, canvas_width, canvas_height);
-
     var x_values = trans.xCoordinateArray(xArray);
     var y_values = trans.yCoordinateArray(yArray);
 
-    // drawTics(ctx, trans, xArray, yArray);
-    // drawFrame(ctx, canvas_width, canvas_height, frame_width, frame_height);
-    drawLine(ctx, x_values, y_values, stroke_style);
-    drawPoints(ctx, x_values, y_values, stroke_style);
+    if(line_properties.show_line) {
+	drawLine(ctx, x_values, y_values, line_properties.stroke_style);
+    }
+    if(line_properties.show_points) {
+	drawPoints(ctx, x_values, y_values, line_properties.stroke_style);
+    }
 }
 
 
@@ -207,6 +197,15 @@ function getShowLine(plot_list, line_index) {
     if ('lines' in plot_list[line_index]) {
 	if( 'show' in plot_list[line_index]['lines'] ) {
 	    return plot_list[line_index]['lines']['show'];
+	}
+    }
+    return false;
+}
+
+function getShowPoints(plot_list, line_index) {
+    if ('points' in plot_list[line_index]) {
+	if( 'show' in plot_list[line_index]['points'] ) {
+	    return plot_list[line_index]['points']['show'];
 	}
     }
     return false;
@@ -242,15 +241,30 @@ function getGlobalMinMax(plot_list) {
     return max_mins;
 }
 
+function getLineProperties(plot_list, line_index) {
+    var stroke_style = getLineStrokeStyle(plot_list, line_index);
+    var show_line = getShowLine(plot_list, line_index);
+    var show_points = getShowPoints(plot_list, line_index);
+    var line_properties = {
+	'show_line' : show_line,
+	'show_points' : show_points,
+	'stroke_style' : stroke_style,
+    }
+    return line_properties;
+}
+
 function plotLineInList(canvas, plot_list, trans,  line_index) {
     // var data_array = plot_list[line_index]["data"];
     // var xArray = getXData(data_array);
     // var yArray = getYData(data_array);
     var xArray = getLineDataX(plot_list, line_index);
     var yArray = getLineDataY(plot_list, line_index);
+    //Baka ihop nedan till en funktion
+    //och skapa structen line_properties
     var stroke_style = getLineStrokeStyle(plot_list, line_index);
     var show_line = getShowLine(plot_list, line_index)
-    drawOnCanvas(canvas, trans, xArray, yArray, stroke_style);
+    var line_properties = getLineProperties(plot_list, line_index);
+    drawOnCanvas(canvas, trans, xArray, yArray, line_properties);
 }
 
 function sternplotOnCanvas(canvas, plot_list) {
