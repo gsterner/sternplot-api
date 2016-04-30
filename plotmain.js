@@ -83,6 +83,7 @@ function drawSingleTicHorizontalAxis(ctx, trans, x_value, y_value) {
     ctx.font="14px Arial";
     var text_shift_away = 10 + 14;
     var text_shift_center = 14;
+    ctx.fillStyle = '#708090';
     ctx.fillText(x_value.toPrecision(4), x_trans - text_shift_center, y_trans + text_shift_away);
 }
 
