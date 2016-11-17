@@ -47,6 +47,20 @@ function getYData(data_array) {
     return getDataAsArray(data_array, 1);
 }
 
+function drawSquareElement(canvas, x_pos, y_pos, side_length, element_color) {
+    var ctx=canvas.getContext("2d");
+    ctx.fillStyle = element_color;
+    ctx.fillRect(x_pos, y_pos, side_length, side_length);
+}
+
+function draw_element_row(canvas) {
+    for(var i = 0; i < 10; i++) {
+	rgb_val = 255-i*10;
+	color = 'rgb(' + rgb_val.toString() + ', 165, 0)';
+	drawSquareElement(canvas, 20+20*i, 20, 20,color);
+    }
+}
+
 function drawPoint(ctx, x_value, y_value, stroke_style) {
       var radius = 4;
       ctx.beginPath();
@@ -275,6 +289,7 @@ function sternplotOnCanvas(canvas, plot_list) {
     var frame_width = canvas.width * 0.1;
     var frame_height = canvas.height * 0.1;
     var trans = new Transform(max_mins.min_x, max_mins.max_x, max_mins.min_y, max_mins.max_y, canvas_width, canvas_height);
+    // draw_element_row(canvas);
     for ( line_index = 0; line_index < plot_list.length; line_index++) {
         plotLineInList(canvas, plot_list, trans, line_index);
     }
